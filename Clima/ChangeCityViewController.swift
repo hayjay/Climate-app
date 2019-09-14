@@ -12,7 +12,6 @@ import UIKit
 //Write the protocol declaration here:
 
 
-
 class ChangeCityViewController: UIViewController {
     
     //Declare the delegate variable here:
