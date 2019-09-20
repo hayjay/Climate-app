@@ -37,16 +37,11 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
         //triggers the authorization popup
         locationManager.requestWhenInUseAuthorization()
         // to display location authorization modal for user, go to info.plist file inside supporting folder and set its valu : location
-        
+        locationManager.startUpdatingLocation()// asynchronous method so that it wont affect the UI while using it
         
         
         //TODO:Set up the location manager here.
-    
-        
-        
     }
-    
-    
     
     //MARK: - Networking
     /***************************************************************/
@@ -103,11 +98,6 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
 
     
     //Write the PrepareForSegue Method here
-    
-    
-    
-    
-    
 }
 
 
