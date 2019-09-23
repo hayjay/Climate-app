@@ -35,8 +35,9 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
         locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
         //ask user for permission to give the app the current location
         //triggers the authorization popup
+        // to display location authorization modal for user, xcode will go to info.plist file inside supporting folder look for the Privacy location keys inorder to display a pop up to the user
         locationManager.requestWhenInUseAuthorization()
-        // to display location authorization modal for user, go to info.plist file inside supporting folder and set its valu : location
+        
         locationManager.startUpdatingLocation()// asynchronous method so that it wont affect the UI while using it
         
         
@@ -80,11 +81,31 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     
     
     //Write the didUpdateLocations method here:
-    
-    
+    //this should happen when we ve git the locaiton value back
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        let location = locations[locations.count - 1]
+        if location.horizontalAccuracy > 0 {
+            locationManager.stopUpdatingLocation()
+            print("longitude = \(location.coordinate.longitude), latitude = \(location.coordinate.latitude)")
+            //we have to type-cast location to string so it could be used in params dictionary because we've explicitly told params variable the both the key and the value we are sending would be in form of string
+            let latitude = String(location.coordinate.latitude)
+            let longitude = String(location.coordinate.longitude)
+            //this params is innform of a dictionary which we will send to the API payload
+            let params : [String : String] = [
+                "lat" : latitude,
+                "long" : longitude,
+                "appid" : APP_ID
+            ]
+        }
+    }
     
     //Write the didFailWithError method here:
-    
+    //tells the delegate (WeatherViewController) that the location manager was unable to retrieve location value..
+//    causes could be 1. internet issue, api key ish its
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print(error)
+        cityLabel.text = "Location Unavailable!"
+    }
     
     
 

@@ -7,10 +7,7 @@
 //
 
 import UIKit
-
-
 //Write the protocol declaration here:
-
 
 class ChangeCityViewController: UIViewController {
     
@@ -33,11 +30,7 @@ class ChangeCityViewController: UIViewController {
         
         
         //3 dismiss the Change City View Controller to go back to the WeatherViewController
-        
-        
     }
-    
-    
 
     //This is the IBAction that gets called when the user taps the back button. It dismisses the ChangeCityViewController.
     @IBAction func backButtonPressed(_ sender: AnyObject) {
