@@ -8,6 +8,8 @@
 
 import UIKit
 import CoreLocation //the module apple has written that allows us to tap into the location API
+import Alamofire
+import SwiftyJSON
 
 //what this means is that the WeatherViewController is a sub class of the UIViewController
 //and the WeatherViewController conforms to the CLLocationManagerDelegate
@@ -50,7 +52,17 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     //Write the getWeatherData method here:
     
 
-    
+    func getWeatherData(url : String, parameters : [String: String]) {
+        Alamofire.request(url, method: .get, parameters: parameters).responseJSON {
+            response in //result gotten back from the server is saved in respnse
+            if response.result.isSuccess{ //checks if the result frm server is successfull
+                print("Success, got the weather data")
+            } else {
+                print("An error occurred : "\(response.result.error))
+                self.cityLabel.text = "Connection Issues"
+            }
+        }
+    }
     
     
     
@@ -96,6 +108,8 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
                 "long" : longitude,
                 "appid" : APP_ID
             ]
+            
+            getWeatherData(url : WEATHER_URL, parameters : params)
         }
     }
     
