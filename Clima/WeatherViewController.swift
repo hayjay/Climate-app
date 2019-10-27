@@ -16,8 +16,10 @@ import SwiftyJSON
 class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     
     //Constants
-    let WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather"
+    let WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather?lat=37.33233141&lon=-122.0312186&appid=39e0a9f85d8db74afb0536e7911d9a15"
     let APP_ID = "39e0a9f85d8db74afb0536e7911d9a15"
+    var latitude : String = ""
+    var longitude : String = ""
     //instantiate the Weather model from the model class
     let weatherDataModel = WeatherDataModel()
 
@@ -53,12 +55,12 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     //Write the getWeatherData method here:
     
 
-    func getWeatherData(url : String, parameters : [String: String]) {
+    func getWeatherData(url : String) {
         //N.B : this alamofire request happens in the background asynchronously
-        Alamofire.request(url, method: .get, parameters: parameters).responseJSON {//callback
+        Alamofire.request(url, method: .get).responseJSON {//callback
             response in //result gotten back from the server is saved in respnse
             if response.result.isSuccess{ //checks if the result frm server is successfull
-                print("Success, got the weather data")
+                print("Success, got the weather data : \(response.result.value)")
                 let weatherJSON : JSON = JSON(response.result.value!)
                 self.updateWeatherData(json: weatherJSON)
             } else {
@@ -75,10 +77,20 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     /***************************************************************/
    
     func updateWeatherData(json : JSON) {
-        let tempResult = json["main"]["temp"].double //changes from the json to a double
-        weatherDataModel.temprature = Int(tempResult! - 273.15) //force unwrap tempResult
-        weatherDataModel.city = json["name"].stringValue //converts the json to a string
-        weatherDataModel.condition = json["condition"]
+        //use of optional binding rather than force unwrapping is advicable
+        //using the if let keyword
+        
+        if let tempResult = json["main"]["temp"].double {
+            //changes from the json to a double
+            weatherDataModel.temprature = Int(tempResult - 273.15) //force unwrap tempResult
+            weatherDataModel.city = json["name"].stringValue //converts the json to a string
+            weatherDataModel.condition = json["weather"][0]["id"].intValue
+            weatherDataModel.weatherIconName = weatherDataModel.updateWeatherIcon(condition: weatherDataModel.condition)
+            
+            updateUIWithWeatherData()
+        } else {
+            cityLabel.text = "Weather Unavailable"
+        }
     }
     //Write the updateWeatherData method here:
     
@@ -89,7 +101,11 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     //MARK: - UI Updates
     /***************************************************************/
     
-    
+    func updateUIWithWeatherData(){
+        cityLabel.text = weatherDataModel.city
+        temperatureLabel.text = "\(weatherDataModel.temprature)"
+        weatherIcon.image = UIImage(named : weatherDataModel.weatherIconName)
+    }
     //Write the updateUIWithWeatherData method here:
     
     
@@ -114,12 +130,14 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
             let longitude = String(location.coordinate.longitude)
             //this params is innform of a dictionary which we will send to the API payload
             let params : [String : String] = [
-                "lat" : latitude,
-                "long" : longitude,
+//                "lat" : latitude,
+//                "long" : longitude,
                 "appid" : APP_ID
             ]
+            self.latitude = latitude
+            self.longitude = longitude
             
-            getWeatherData(url : WEATHER_URL, parameters : params)
+            getWeatherData(url : WEATHER_URL)
         }
     }
     
