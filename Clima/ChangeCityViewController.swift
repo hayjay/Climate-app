@@ -15,7 +15,6 @@ protocol ChangeCityDelegate {
 }
 
 class ChangeCityViewController: UIViewController {
-    
     //Declare the delegate variable here:
     var delegate : ChangeCityDelegate? //make this delegate property optional so it can be field or not
     
