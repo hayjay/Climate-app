@@ -168,7 +168,10 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, Change
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         //if the segue name of where the user is comming frm is named changeCityName then do the following
         if segue.identifier == "changeCityName" {
-            
+            //this tells xCode that the dataType of this destination is going to be a type ChangeCityViewController
+            let destinationVC = segue.destination as! ChangeCityViewController
+            //activating the delegate property in the ChangeCityViewController
+            destinationVC.delegate = self //WeatherViewController
         }
     }
 }
