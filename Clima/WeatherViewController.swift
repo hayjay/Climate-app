@@ -13,7 +13,7 @@ import SwiftyJSON
 
 //what this means is that the WeatherViewController is a sub class of the UIViewController
 //and the WeatherViewController conforms to the CLLocationManagerDelegate
-class WeatherViewController: UIViewController, CLLocationManagerDelegate {
+class WeatherViewController: UIViewController, CLLocationManagerDelegate, ChangeCityDelegate { //using ChangeCityDelegate here simply means, in this ViewController, one must implement all the functions of the ChangeCityDelegate Protocol
     
     //Constants
     let WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather?lat=37.33233141&lon=-122.0312186&appid=39e0a9f85d8db74afb0536e7911d9a15"
@@ -158,9 +158,19 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     
     //Write the userEnteredANewCityName Delegate method here:
     
-
+    func userEnteredANewCityName(city : String)
+    {
+        print(city)
+    }
     
     //Write the PrepareForSegue Method here
+    //this function gets executed when we segue or move from the first view controller to the second viewController
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        //if the segue name of where the user is comming frm is named changeCityName then do the following
+        if segue.identifier == "changeCityName" {
+            
+        }
+    }
 }
 
 

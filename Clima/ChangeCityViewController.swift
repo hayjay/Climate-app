@@ -7,12 +7,17 @@
 //
 
 import UIKit
-//Write the protocol declaration here:
+//Write the protocol declaration here: //this protocol is meant for the ChangeCity Delegate
+//so we can pass the location in the textbox on ChangeCityViewController to the WeatherViewController
+protocol ChangeCityDelegate {
+    //in swift, a Protocol is just like an interface which is like settings / requirements a Delegate class would need to satify
+    func userEnteredANewCityName (city : String)
+}
 
 class ChangeCityViewController: UIViewController {
     
     //Declare the delegate variable here:
-
+    var delegate : ChangeCityDelegate? //make this delegate property optional so it can be field or not
     
     //This is the pre-linked IBOutlets to the text field:
     @IBOutlet weak var changeCityTextField: UITextField!
