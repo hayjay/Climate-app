@@ -17,8 +17,9 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     
     //Constants
     let WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather"
-    let APP_ID = "17df8719efde35a3066092d07cb96faa  "
-    
+    let APP_ID = "39e0a9f85d8db74afb0536e7911d9a15"
+    //instantiate the Weather model from the model class
+    let weatherDataModel = WeatherDataModel()
 
     //TODO: Declare instance variables here
     let locationManager = CLLocationManager() //this create an instance of the CLLocationManager() class
@@ -53,13 +54,16 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     
 
     func getWeatherData(url : String, parameters : [String: String]) {
-        Alamofire.request(url, method: .get, parameters: parameters).responseJSON {
+        //N.B : this alamofire request happens in the background asynchronously
+        Alamofire.request(url, method: .get, parameters: parameters).responseJSON {//callback
             response in //result gotten back from the server is saved in respnse
             if response.result.isSuccess{ //checks if the result frm server is successfull
                 print("Success, got the weather data")
+                let weatherJSON : JSON = JSON(response.result.value!)
+                self.updateWeatherData(json: weatherJSON)
             } else {
-                print("An error occurred : "\(response.result.error))
-                self.cityLabel.text = "Connection Issues"
+                print("An error occurred : \(response.result.error)")
+                self.cityLabel.text = "Connection Issues!"
             }
         }
     }
@@ -70,7 +74,12 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     //MARK: - JSON Parsing
     /***************************************************************/
    
-    
+    func updateWeatherData(json : JSON) {
+        let tempResult = json["main"]["temp"].double //changes from the json to a double
+        weatherDataModel.temprature = Int(tempResult! - 273.15) //force unwrap tempResult
+        weatherDataModel.city = json["name"].stringValue //converts the json to a string
+        weatherDataModel.condition = json["condition"]
+    }
     //Write the updateWeatherData method here:
     
 
@@ -98,6 +107,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
         let location = locations[locations.count - 1]
         if location.horizontalAccuracy > 0 {
             locationManager.stopUpdatingLocation()
+            locationManager.delegate = nil
             print("longitude = \(location.coordinate.longitude), latitude = \(location.coordinate.latitude)")
             //we have to type-cast location to string so it could be used in params dictionary because we've explicitly told params variable the both the key and the value we are sending would be in form of string
             let latitude = String(location.coordinate.latitude)
