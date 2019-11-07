@@ -17,6 +17,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, Change
     
     //Constants
     let WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather?lat=37.33233141&lon=-122.0312186&appid=39e0a9f85d8db74afb0536e7911d9a15"
+    let WEATHER_URL_1 = "http://api.openweathermap.org/data/2.5/weather"
     let APP_ID = "39e0a9f85d8db74afb0536e7911d9a15"
     var latitude : String = ""
     var longitude : String = ""
@@ -70,6 +71,21 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, Change
         }
     }
     
+    func getWeatherCityData(url : String, parameters : [String : String]) {
+        //N.B : this alamofire request happens in the background asynchronously
+        Alamofire.request(url, method: .get, parameters: parameters).responseJSON {//callback
+            response in //result gotten back from the server is saved in respnse
+            if response.result.isSuccess{ //checks if the result frm server is successfull
+                print("Success, got the weather data : \(response.result.value)")
+                let weatherJSON : JSON = JSON(response.result.value!)
+                self.updateWeatherData(json: weatherJSON)
+            } else {
+                print("An error occurred : \(response.result.error)")
+                self.cityLabel.text = "Connection Issues!"
+            }
+        }
+    }
+    
     
     
     
@@ -103,7 +119,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, Change
     
     func updateUIWithWeatherData(){
         cityLabel.text = weatherDataModel.city
-        temperatureLabel.text = "\(weatherDataModel.temprature)"
+        temperatureLabel.text = "\(weatherDataModel.temprature)°"
         weatherIcon.image = UIImage(named : weatherDataModel.weatherIconName)
     }
     //Write the updateUIWithWeatherData method here:
@@ -161,6 +177,8 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, Change
     func userEnteredANewCityName(city : String)
     {
         print(city)
+        let params : [String : String] = ["q" : city, "appid" : APP_ID]
+        getWeatherCityData(url: WEATHER_URL, parameters : params)
     }
     
     //Write the PrepareForSegue Method here
